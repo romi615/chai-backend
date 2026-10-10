@@ -36,8 +36,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { fullname, email, username, password } = req.body;
 
-  // console.log(req.body);
-
   if (
     [fullname, email, username, password].some((field) => field?.trim() === "")
   ) {
@@ -48,16 +46,12 @@ const registerUser = asyncHandler(async (req, res) => {
     $or: [{ username }, { email }],
   });
 
-  // console.log(existedUser);
-
   if (existedUser) {
     throw new ApiError(409, "User with email or username already exits");
   }
 
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   // const coverImageLocalPath = req.files?.coverImage[0]?.path;
-
-  // console.log("avatarLocalPath", avatarLocalPath);
 
   let coverImageLocalPath;
   if (
@@ -67,8 +61,6 @@ const registerUser = asyncHandler(async (req, res) => {
   ) {
     coverImageLocalPath = req.files.coverImage[0].path;
   }
-
-  // console.log("coverImageLocalPath", coverImageLocalPath);
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
@@ -192,7 +184,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
-  if (incomingRefreshToken) {
+  if (!incomingRefreshToken) {
     throw new ApiError(401, "unauthorized request");
   }
 
